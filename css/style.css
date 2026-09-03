@@ -1,0 +1,132 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Scroll Lock when Modal is Active */
+body.modal-open {
+    overflow: hidden !important;
+    touch-action: none !important;
+    height: 100vh !important;
+}
+
+/* Hide scrollbar for tabs */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Smooth Modal & Card Open Animations (Apple Spring Sheet Physics) */
+#mod-modal {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1), backdrop-filter 0.32s ease;
+    overscroll-behavior: contain;
+    touch-action: none;
+}
+
+#mod-modal.active {
+    display: flex !important;
+    opacity: 1 !important;
+}
+
+#mod-modal .modal-content-box {
+    transform: translateY(105%);
+    transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+    touch-action: pan-y;
+    overscroll-behavior: contain;
+}
+
+#mod-modal.active .modal-content-box {
+    transform: translateY(0%) !important;
+}
+
+#mod-modal.closing .modal-content-box {
+    transform: translateY(105%) !important;
+    transition: transform 0.32s cubic-bezier(0.32, 0, 0.67, 0) !important;
+}
+
+#mod-modal.closing {
+    opacity: 0 !important;
+    transition: opacity 0.28s ease !important;
+}
+
+/* Staggered Modal Content Reveal */
+@keyframes modalItemSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal-anim-item {
+    opacity: 0;
+    animation: modalItemSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.modal-anim-delay-1 { animation-delay: 0.06s; }
+.modal-anim-delay-2 { animation-delay: 0.12s; }
+.modal-anim-delay-3 { animation-delay: 0.18s; }
+.modal-anim-delay-4 { animation-delay: 0.24s; }
+
+/* Image zoom-in effect */
+@keyframes imageZoomReveal {
+    from {
+        opacity: 0;
+        transform: scale(1.08);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.modal-image-reveal {
+    animation: imageZoomReveal 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Staggered Item Fade-In */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Micro-interactions for cards */
+.mod-card-item {
+    transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s, box-shadow 0.2s;
+}
+
+.mod-card-item:active {
+    transform: scale(0.96);
+}
+
+/* Tab Active Styles */
+.nav-tab {
+    transition: all 0.2s ease;
+}
+
+.nav-tab.active {
+    color: hsl(0 0% 98%) !important;
+    background-color: hsl(240 3.7% 15.9% / 0.6) !important;
+}

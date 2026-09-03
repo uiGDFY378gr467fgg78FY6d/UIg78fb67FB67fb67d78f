@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CarMone Mod Store</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        border: "hsl(240 3.7% 15.9%)",
+                        input: "hsl(240 3.7% 15.9%)",
+                        ring: "hsl(240 4.9% 83.9%)",
+                        background: "hsl(240 10% 3.9%)",
+                        foreground: "hsl(0 0% 98%)",
+                        primary: {
+                            DEFAULT: "hsl(0 0% 98%)",
+                            foreground: "hsl(240 5.9% 10%)",
+                        },
+                        secondary: {
+                            DEFAULT: "hsl(240 3.7% 15.9%)",
+                            foreground: "hsl(0 0% 98%)",
+                        },
+                        destructive: {
+                            DEFAULT: "hsl(0 62.8% 30.6%)",
+                            foreground: "hsl(0 0% 98%)",
+                        },
+                        muted: {
+                            DEFAULT: "hsl(240 3.7% 15.9%)",
+                            foreground: "hsl(240 5% 64.9%)",
+                        },
+                        accent: {
+                            DEFAULT: "hsl(240 3.7% 15.9%)",
+                            foreground: "hsl(0 0% 98%)",
+                        },
+                        card: {
+                            DEFAULT: "hsl(240 10% 3.9%)",
+                            foreground: "hsl(0 0% 98%)",
+                        },
+                    },
+                    borderRadius: {
+                        lg: "0.5rem",
+                        md: "calc(0.5rem - 2px)",
+                        sm: "calc(0.5rem - 4px)",
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-background text-foreground antialiased min-h-screen pb-24 font-sans selection:bg-primary selection:text-primary-foreground">
+    
+    <!-- Top Header / Navigation -->
+    <header class="sticky top-0 z-40 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center">
+            <span class="text-sm font-semibold tracking-tight lowercase text-foreground">by carmone</span>
+        </div>
+        
+        <!-- User Pill Badge -->
+        <div id="user-badge" class="flex items-center gap-2 rounded-full border border-border/60 bg-secondary/40 px-2.5 py-1 text-[11px]">
+            <div id="user-status-dot" class="h-1.5 w-1.5 rounded-full bg-emerald-500"></div>
+            <span id="user-name" class="font-medium text-muted-foreground">Пользователь</span>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-md mx-auto px-4 pt-4">
+
+        <!-- 1. Вкладка: Каталог модов -->
+        <section id="view-catalog" class="space-y-4">
+            <!-- Search & Filters -->
+            <div class="relative">
+                <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"></i>
+                <input type="text" id="search-input" placeholder="Поиск модификаций..." 
+                    class="w-full rounded-md border border-input bg-background/50 pl-9 pr-4 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring transition-all">
+            </div>
+
+            <!-- Filter Badges / Tabs -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar text-xs">
+                <button class="filter-btn active rounded-full px-3.5 py-1.5 font-medium transition-colors bg-primary text-primary-foreground shadow-sm" data-filter="all">Все работы</button>
+                <button class="filter-btn rounded-full px-3.5 py-1.5 font-medium transition-colors border border-border bg-secondary/40 text-muted-foreground hover:text-foreground" data-filter="paid">🔥 Платные</button>
+                <button class="filter-btn rounded-full px-3.5 py-1.5 font-medium transition-colors border border-border bg-secondary/40 text-muted-foreground hover:text-foreground" data-filter="free">🎁 Бесплатные</button>
+            </div>
+
+            <!-- Grid of Cards -->
+            <div id="mods-grid" class="grid grid-cols-2 gap-3 pt-1">
+                <!-- Cards injected dynamically via JS -->
+            </div>
+        </section>
+
+        <!-- 2. Вкладка: Мои покупки -->
+        <section id="view-purchases" class="hidden space-y-3">
+            <div class="flex items-center justify-between pb-1">
+                <h2 class="text-base font-semibold tracking-tight">Купленные моды</h2>
+                <span id="purchases-count" class="text-xs text-muted-foreground">0 файлов</span>
+            </div>
+            <div id="purchases-list" class="space-y-2.5">
+                <!-- Purchases injected dynamically -->
+            </div>
+        </section>
+
+        <!-- 3. Вкладка: Индивидуальные заказы (Офферы) -->
+        <section id="view-orders" class="hidden space-y-3">
+            <div class="flex items-center justify-between pb-1">
+                <h2 class="text-base font-semibold tracking-tight">Индивидуальные заказы</h2>
+                <span class="text-xs text-muted-foreground">Escrow гарант</span>
+            </div>
+            <div id="orders-list" class="space-y-3">
+                <!-- Orders list -->
+            </div>
+        </section>
+
+        <!-- 4. Вкладка: Кабинет Автора -->
+        <section id="view-author" class="hidden space-y-4">
+            <div class="rounded-xl border border-border bg-card p-4 space-y-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-medium text-muted-foreground">Баланс автора</span>
+                    <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-medium">Верифицирован</span>
+                </div>
+                <div class="flex items-baseline gap-1">
+                    <span class="text-3xl font-bold tracking-tight" id="author-balance">0.00</span>
+                    <span class="text-muted-foreground font-semibold text-lg">$</span>
+                </div>
+                <div class="pt-2 flex gap-2">
+                    <button onclick="requestWithdrawal()" class="w-full rounded-md bg-primary text-primary-foreground py-2 text-xs font-medium shadow hover:bg-primary/90 transition-all flex items-center justify-center gap-1.5">
+                        <i data-lucide="arrow-up-right" class="h-3.5 w-3.5"></i>
+                        Запросить вывод
+                    </button>
+                </div>
+            </div>
+
+            <!-- Статистика заказов -->
+            <div class="space-y-2">
+                <h3 class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Активные заказы</h3>
+                <div id="author-orders-list" class="space-y-2"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal Drawer / Sheet (shadcn Dialog style) -->
+    <div id="mod-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4 opacity-0 transition-opacity duration-300" onclick="closeModal()">
+        <div id="modal-sheet-box" class="modal-content-box w-full max-w-lg rounded-t-2xl sm:rounded-xl border border-border bg-background px-6 pb-6 pt-3 shadow-2xl max-h-[90vh] overflow-y-auto space-y-4 touch-pan-y" onclick="event.stopPropagation()">
+            <!-- Swipe Handle Bar -->
+            <div class="w-12 h-1.5 bg-muted-foreground/30 hover:bg-muted-foreground/50 rounded-full mx-auto cursor-grab active:cursor-grabbing transition-colors"></div>
+            
+            <div class="flex items-center justify-between">
+                <span class="text-xs uppercase tracking-wider font-semibold text-muted-foreground">Детали модификации</span>
+                <button onclick="closeModal()" class="rounded-full p-1.5 text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors">
+                    <i data-lucide="x" class="h-4 w-4"></i>
+                </button>
+            </div>
+            
+            <div id="modal-body" class="space-y-4">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation Bar (shadcn inspired) -->
+    <nav class="fixed bottom-0 left-0 right-0 z-40 border-t border-border/60 bg-background/80 backdrop-blur-lg px-2 py-2">
+        <div class="max-w-md mx-auto grid grid-cols-3 gap-1" id="nav-container">
+            <button class="nav-tab active flex flex-col items-center justify-center py-1.5 px-3 rounded-md text-foreground transition-all" data-tab="catalog">
+                <i data-lucide="layout-grid" class="h-5 w-5 mb-1"></i>
+                <span class="text-[11px] font-medium leading-none">Каталог</span>
+            </button>
+            <button class="nav-tab flex flex-col items-center justify-center py-1.5 px-3 rounded-md text-muted-foreground hover:text-foreground transition-all" data-tab="purchases">
+                <i data-lucide="download-cloud" class="h-5 w-5 mb-1"></i>
+                <span class="text-[11px] font-medium leading-none">Покупки</span>
+            </button>
+            <button class="nav-tab flex flex-col items-center justify-center py-1.5 px-3 rounded-md text-muted-foreground hover:text-foreground transition-all" data-tab="orders">
+                <i data-lucide="clipboard-list" class="h-5 w-5 mb-1"></i>
+                <span class="text-[11px] font-medium leading-none">Заказы</span>
+            </button>
+            <button class="nav-tab hidden flex flex-col items-center justify-center py-1.5 px-3 rounded-md text-muted-foreground hover:text-foreground transition-all" id="nav-author-tab" data-tab="author">
+                <i data-lucide="sparkles" class="h-5 w-5 mb-1"></i>
+                <span class="text-[11px] font-medium leading-none">Автор</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Application Scripts -->
+    <script src="js/fingerprint.js"></script>
+    <script src="js/static_data.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
